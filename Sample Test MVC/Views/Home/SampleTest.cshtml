@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Sample Test";
+}
+@*<h3>@ViewBag.Message</h3>*@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Calculate Stock</h3>
+            </div>
+            <div class="box-body">
+                <form role="form">
+                    <div class="form-group">
+                        <label>Saving Value</label>
+                        <input type="number" class="form-control" id="savingValue" style="margin-bottom:10px" placeholder="Input Saving Value" required>
+                        <label>Current Stock Value</label>
+                        <div class="box-body" style="margin-bottom:15px">
+                            <div class="row">
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="fcValue" placeholder="First Value" required>
+                                    @*<div class="form-group" style="text-align:end">
+                                        <label style="margin-right:15px">
+                                            <input type="radio" name="v1" class="minimal" checked>
+                                            <label>Pass</label>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="v1" class="minimal">
+                                            <label>Buy</label>
+                                        </label>
+                                    </div>*@
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="secCValue" placeholder="Second Value" required>
+                                    @*<div class="form-group" style="text-align:end">
+                                        <label style="margin-right:15px">
+                                            <input type="radio" name="v2" class="minimal" checked>
+                                            <label>Pass</label>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="v2" class="minimal">
+                                            <label>Buy</label>
+                                        </label>
+                                    </div>*@
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="thCValue" placeholder="Third Value" required>
+                                    @*<div class="form-group" style="text-align:end">
+                                        <label style="margin-right:15px">
+                                            <input type="radio" name="v3" class="minimal" checked>
+                                            <label>Pass</label>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="v3" class="minimal">
+                                            <label>Buy</label>
+                                        </label>
+                                    </div>*@
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="fthCValue" placeholder="Fourth Value" required>
+                                    @*<div class="form-group" style="text-align:end">
+                                        <label style="margin-right:15px">
+                                            <input type="radio" name="v4" class="minimal" checked>
+                                            <label>Pass</label>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="v4" class="minimal">
+                                            <label>Buy</label>
+                                        </label>
+                                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                        <label>Future Stock Value</label>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="fFValue" placeholder="First Value" required>
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="secFValue" placeholder="Second Value" required>
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="thFValue" placeholder="Third Value" required>
+                                </div>
+                                <div class="col-xs-3 mr-2">
+                                    <input type="number" class="form-control" id="fthFValue" placeholder="Fourth Value" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        const savingValue = document.getElementById("savingValue")
+        // Current Value
+        var fCValue = document.getElementById("fcValue")
+        var secCValue = document.getElementById("secCValue")
+        var thCValue = document.getElementById("thCValue")
+        var fthCValue = document.getElementById("fthCValue")
+
+        // Future Value
+        var fFValue = document.getElementById("fFValue")
+        var secFValue = document.getElementById("secFValue")
+        var thFValue = document.getElementById("thFValue")
+        var fthFValue = document.getElementById("fthFValue")
+        
+    </script>    
+}
