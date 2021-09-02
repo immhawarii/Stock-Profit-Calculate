@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Sample_Test_MVC.Models.StockValueModel
+
+@{
     ViewData["Title"] = "Sample Test";
 }
 @*<h3>@ViewBag.Message</h3>*@
@@ -11,109 +13,193 @@
             </div>
             <div class="box-body">
                 <form role="form">
-                    <div class="form-group">
-                        <label>Saving Value</label>
-                        <input type="number" class="form-control" id="savingValue" style="margin-bottom:10px" placeholder="Input Saving Value" required>
-                        <label>Current Stock Value</label>
-                        <div class="box-body" style="margin-bottom:15px">
-                            <div class="row">
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="fcValue" placeholder="First Value" required>
-                                    @*<div class="form-group" style="text-align:end">
-                                        <label style="margin-right:15px">
-                                            <input type="radio" name="v1" class="minimal" checked>
-                                            <label>Pass</label>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="v1" class="minimal">
-                                            <label>Buy</label>
-                                        </label>
-                                    </div>*@
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="secCValue" placeholder="Second Value" required>
-                                    @*<div class="form-group" style="text-align:end">
-                                        <label style="margin-right:15px">
-                                            <input type="radio" name="v2" class="minimal" checked>
-                                            <label>Pass</label>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="v2" class="minimal">
-                                            <label>Buy</label>
-                                        </label>
-                                    </div>*@
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="thCValue" placeholder="Third Value" required>
-                                    @*<div class="form-group" style="text-align:end">
-                                        <label style="margin-right:15px">
-                                            <input type="radio" name="v3" class="minimal" checked>
-                                            <label>Pass</label>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="v3" class="minimal">
-                                            <label>Buy</label>
-                                        </label>
-                                    </div>*@
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="fthCValue" placeholder="Fourth Value" required>
-                                    @*<div class="form-group" style="text-align:end">
-                                        <label style="margin-right:15px">
-                                            <input type="radio" name="v4" class="minimal" checked>
-                                            <label>Pass</label>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="v4" class="minimal">
-                                            <label>Buy</label>
-                                        </label>
-                                    </div>*@
-                                </div>
-                            </div>
+                    <label>Your Saving Value (Funds)</label>
+                    <input type="number" class="form-control" id="savingValue" style="margin-bottom:10px" placeholder="Input Saving Value" required>
+                    <label>How much stock do you buy?</label>
+                    <input type="number" class="form-control" id="muchStock" style="margin-bottom:10px" placeholder="Number of stock" required>
+                    <label id="currentLabel" hidden>Current Stock Value</label>
+                    <div class="box-body" style="margin-bottom:15px">
+                        <div class="row" id="inputStock">
                         </div>
-                        <label>Future Stock Value</label>
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="fFValue" placeholder="First Value" required>
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="secFValue" placeholder="Second Value" required>
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="thFValue" placeholder="Third Value" required>
-                                </div>
-                                <div class="col-xs-3 mr-2">
-                                    <input type="number" class="form-control" id="fthFValue" placeholder="Fourth Value" required>
-                                </div>
-                            </div>
+                    </div>
+                    <label id="futureLabel" hidden>Future Stock Value</label>
+                    <div class="box-body">
+                        <div class="row" id="inputFuture">
                         </div>
                     </div>
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">Calculate</button>
+                        <button type="reset" id="reset" onclick="resetForm()" class="btn btn-md btn-primary">Reset</button>
+                        <button type="submit" id="calculate" class="btn btn-md btn-primary">Calculate</button>
+                        @*<input type="submit" value="Calculate" id="calculate" class="btn btn-md btn-primary"/>*@
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<div id="chartDiv">
+
+</div>
 
 
 @section Scripts
 {
-    <script>
-        const savingValue = document.getElementById("savingValue")
-        // Current Value
-        var fCValue = document.getElementById("fcValue")
-        var secCValue = document.getElementById("secCValue")
-        var thCValue = document.getElementById("thCValue")
-        var fthCValue = document.getElementById("fthCValue")
-
-        // Future Value
-        var fFValue = document.getElementById("fFValue")
-        var secFValue = document.getElementById("secFValue")
-        var thFValue = document.getElementById("thFValue")
-        var fthFValue = document.getElementById("fthFValue")
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
         
-    </script>    
+        // Current Value
+        var CurrentValue = [];
+        var FutureValue = [];
+        var stringInputStock = '';
+        var stringInputFuture = '';
+        var profitGain = 0;
+
+        var muchStockBought = 0;
+        document.getElementById('muchStock').onchange = function (e) {
+            document.getElementById('currentLabel').hidden = true;
+            document.getElementById('futureLabel').hidden = true;
+            document.getElementById('inputStock').innerHTML = '';
+            document.getElementById('inputFuture').innerHTML = '';
+            stringInputStock = '';
+            stringInputFuture = '';
+            muchStockBought = this.value;
+            for (i = 1; i <= this.value; i++) {
+                stringInputStock += `
+                    <div class="col-xs-2 mr-1" style="margin-bottom:10px">
+                        <input type="number" class="form-control" id="stockValue${i}" min="0" max="300" placeholder="Stock value ${i}" required>
+                    </div>
+                `;
+                stringInputFuture += `
+                    <div class="col-xs-2 mr-1" style="margin-bottom:10px">
+                        <input type="number" class="form-control" id="futureValue${i}" min="0" max="300" placeholder="Future value ${i}" required>
+                    </div>
+                `
+                document.getElementById('currentLabel').removeAttribute('hidden');
+                document.getElementById('futureLabel').removeAttribute('hidden');
+            }
+            document.getElementById('inputStock').innerHTML = stringInputStock;
+            document.getElementById('inputFuture').innerHTML = stringInputFuture;
+        }
+
+        function resetForm() {
+            document.getElementById('muchStock').value = '';
+            document.getElementById('inputStock').innerHTML = '';
+            document.getElementById('inputFuture').innerHTML = '';
+            stringInputStock = '';
+            stringInputFuture = '';
+            document.getElementById('currentLabel').hidden = true;
+            document.getElementById('futureLabel').hidden = true;
+            CurrentValue = [];
+            CurrentValue.length = 0;
+            FutureValue = [];
+            FutureValue.length = 0;
+        }
+
+        document.getElementById('calculate').onclick = function (e) {
+
+            if (document.getElementById('myChart')) {
+                console.log("elemA exists");
+                document.getElementById('myChart').remove();
+                var canv = document.createElement('canvas');
+                canv.id = 'myChart';
+                document.getElementById('chartDiv').appendChild(canv); // adds the canvas to #someBox
+            } else {
+                var canv = document.createElement('canvas');
+                canv.id = 'myChart';
+                document.getElementById('chartDiv').appendChild(canv); // adds the canvas to #someBox
+            }
+
+            e.preventDefault();
+            var savingValue = '';
+
+            if (document.getElementById("savingValue").validity.valueMissing) {
+                alert('Saving Value Is Required');
+                return false;
+            } else {
+                savingValue = document.getElementById("savingValue").value;
+            }
+
+            for (i = 1; i <= muchStockBought; i++)
+            {
+                if (document.getElementById(`stockValue${i}`).validity.valueMissing) {
+                    alert(`Current Value ${i} Is Required`);
+                    return false;
+                } else {
+                    CurrentValue.push(document.getElementById(`stockValue${i}`).value);
+                }
+            }
+
+            for (i = 1; i <= muchStockBought; i++) {
+                if (document.getElementById(`futureValue${i}`).validity.valueMissing) {
+                    alert(`Future Value ${i} Is Required`);
+                    return false;
+                } else {
+                    FutureValue.push(document.getElementById(`futureValue${i}`).value);
+                }
+            }
+
+            var list = new Array();
+            list = [
+                {"saving": savingValue},
+                {"current": CurrentValue},
+                {"future": FutureValue}
+            ];
+
+            const toNumbers = arr => arr.map(Number);
+            const reducer = (accumulator, curr) => accumulator + curr;
+            var sumOfFunds = toNumbers(CurrentValue).reduce(reducer);
+            if (sumOfFunds > parseInt(savingValue)) {
+                alert('The total invested cannot exceed the funds available.');
+                CurrentValue = [];
+                CurrentValue.length = 0;
+                FutureValue = [];
+                FutureValue.length = 0;
+                return false;
+            }
+
+            $.ajax({
+                async: false, //add this
+                type: "POST",
+                url: "@Url.Action("SampleTest", "Home")",
+                data: {
+                    "data": JSON.stringify(list)
+                },
+                dataType: "json",
+                success: function (response) {
+                    resetForm()
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    document.getElementById('myChart').style.display = 'block';
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Profit Gain'],
+                            datasets: [{
+                                label: 'Profit Gain',
+                                data: [parseInt(response)],
+                                backgroundColor: [
+                                    'rgb(75,192,192)'
+                                ],
+                                borderColor: [
+                                    'rgb(75,192,192)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    myChart.update();
+                },
+                error: function (textStatus, errorThrown) {
+                    callbackfn("Error getting the data")
+                }
+            });
+        };
+
+    </script>
 }
